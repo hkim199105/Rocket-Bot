@@ -295,8 +295,7 @@ namespace Microsoft.BotBuilderSamples
         private string ParseLuisForEntities(RecognizerResult recognizerResult)
         {
             var result = string.Empty;
-            result = recognizerResult.ToString();
-            /*
+
             // recognizerResult.Entities returns type JObject.
             foreach (var entity in recognizerResult.Entities)
             {
@@ -354,7 +353,6 @@ namespace Microsoft.BotBuilderSamples
                 }
             }
             // No entities were found, empty string returned.
-            */
             return result;
         }
     }
