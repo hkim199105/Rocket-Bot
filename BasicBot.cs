@@ -28,7 +28,6 @@ namespace Microsoft.BotBuilderSamples
         public const string BuyIntent = "주식매수";
         public const string SellIntent = "주식매도";
         public const string ModifyIntent = "주식정정";
-        public const string CancelIntent = "주식취소";
 
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
@@ -130,11 +129,11 @@ namespace Microsoft.BotBuilderSamples
                                     break;
                                 
                                 case BuyIntent:
-                                    await dc.Context.SendActivityAsync("TESTTTTTTTTTT");
+                                    await dc.Context.SendActivityAsync(topIntent);
                                     break;
                                     
                                 case SellIntent:
-                                    await dc.Context.SendActivityAsync(topIntent);
+                                    await dc.Context.SendActivityAsync(topIntent); 
                                     break;
                             }
                             break;
