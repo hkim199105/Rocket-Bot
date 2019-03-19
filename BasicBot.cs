@@ -108,22 +108,10 @@ namespace Microsoft.BotBuilderSamples
 
                 // Continue the current dialog
                 var dialogResult = await dc.ContinueDialogAsync();
-
+                
                 // See if LUIS found and used an entity to determine user intent.
                 var entityFound = ParseLuisForEntities(luisResults);
-
-                // Inform the user if LUIS used an entity.
-                if (entityFound.ToString() != string.Empty)
-                {
-                    await dc.Context.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
-                    //await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
-                }
-                else
-                {
-                    await dc.Context.SendActivityAsync($"==>No LUIS Entities Found.\n");
-                    //await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
-                }
-
+                
                 // if no one has responded,
                 if (!dc.Context.Responded)
                 {
@@ -146,6 +134,17 @@ namespace Microsoft.BotBuilderSamples
 
                                 case BuyIntent:
                                     await dc.Context.SendActivityAsync(topIntent);
+
+                                    // Inform the user if LUIS used an entity.
+                                    if (entityFound.ToString() != string.Empty)
+                                    {
+                                        await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                    }
+                                    else
+                                    {
+                                        await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                                    }
+
                                     break;
 
                                 case SellIntent:
