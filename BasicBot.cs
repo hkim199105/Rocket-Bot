@@ -330,13 +330,9 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.수량[0].type;
                         var entScore = o.수량[0].score;
                         var entValue = o.수량[0].text;
-                        result = result + "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
+                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
 
-                        //return result;
-                    }
-                    else
-                    {
-                        result = "수량Entity 없음\n";
+                        return result;
                     }
                 }
 
@@ -350,13 +346,12 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.종목[0].type;
                         var entScore = o.종목[0].score;
                         var entValue = o.종목[0].text;
-                        result = result + "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
+                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
-                        //return result;
+                        return result;
                     }
                 }
             }
-
             // No entities were found, empty string returned.
             return result;
         }
