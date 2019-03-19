@@ -12,6 +12,7 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -91,6 +92,23 @@ namespace Microsoft.BotBuilderSamples
 
                 var topIntent = topScoringIntent.Value.intent;
 
+
+
+                // See if LUIS found and used an entity to determine user intent.
+                var entityFound = ParseLuisForEntities(luisResults);
+
+                // Inform the user if LUIS used an entity.
+                if (entityFound.ToString() != string.Empty)
+                {
+                    await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                }
+                else
+                {
+                    await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                }
+
+
+
                 // update greeting state with any entities captured
                 await UpdateGreetingState(luisResults, dc.Context);
 
@@ -127,13 +145,13 @@ namespace Microsoft.BotBuilderSamples
                                     // to the user
                                     await dc.Context.SendActivityAsync("I didn't understand what you just said to me.");
                                     break;
-                                
+
                                 case BuyIntent:
                                     await dc.Context.SendActivityAsync(topIntent);
                                     break;
-                                    
+
                                 case SellIntent:
-                                    await dc.Context.SendActivityAsync(topIntent); 
+                                    await dc.Context.SendActivityAsync(topIntent);
                                     break;
                             }
                             break;
@@ -145,7 +163,7 @@ namespace Microsoft.BotBuilderSamples
                         case DialogTurnStatus.Complete:
                             await dc.EndDialogAsync();
                             break;
-                        
+
                         default:
                             await dc.CancelAllDialogsAsync();
                             break;
@@ -275,6 +293,69 @@ namespace Microsoft.BotBuilderSamples
                 // Set the new values into state.
                 await _greetingStateAccessor.SetAsync(turnContext, greetingState);
             }
+        }
+
+        private string ParseLuisForEntities(RecognizerResult recognizerResult)
+        {
+            var result = string.Empty;
+
+            // recognizerResult.Entities returns type JObject.
+            foreach (var entity in recognizerResult.Entities)
+            {
+                // Parse JObject for a known entity types: Appointment, Meeting, and Schedule.
+                var stockPrice = JObject.Parse(entity.Value.ToString())["단가"];
+                var stockQuantity = JObject.Parse(entity.Value.ToString())["수량"];
+                var stockName = JObject.Parse(entity.Value.ToString())["종목"];
+
+                // We will return info on the first entity found.
+                if (stockPrice != null)
+                {
+                    // use JsonConvert to convert entity.Value to a dynamic object.
+                    dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
+                    if (o.단가[0] != null)
+                    {
+                        // Find and return the entity type and score.
+                        var entType = o.단가[0].type;
+                        var entScore = o.단가[0].score;
+                        result = "Entity: " + entType + ", Score: " + entScore + ".";
+
+                        return result;
+                    }
+                }
+
+                if (stockQuantity != null)
+                {
+                    // use JsonConvert to convert entity.Value to a dynamic object.
+                    dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
+                    if (o.수량[0] != null)
+                    {
+                        // Find and return the entity type and score.
+                        var entType = o.수량[0].type;
+                        var entScore = o.수량[0].score;
+                        result = "Entity: " + entType + ", Score: " + entScore + ".";
+
+                        return result;
+                    }
+                }
+
+                if (stockName != null)
+                {
+                    // use JsonConvert to convert entity.Value to a dynamic object.
+                    dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
+                    if (o.종목[0] != null)
+                    {
+                        // Find and return the entity type and score.
+                        var entType = o.종목[0].type;
+                        var entScore = o.종목[0].score;
+                        result = "Entity: " + entType + ", Score: " + entScore + ".";
+
+                        return result;
+                    }
+                }
+            }
+
+            // No entities were found, empty string returned.
+            return result;
         }
     }
 }

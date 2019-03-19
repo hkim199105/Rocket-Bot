@@ -10,3 +10,6 @@ runtimes/**
 /.vs/BasicBot/v15/Server/sqlite3/storage.ide-shm
 /.vs/BasicBot/v15/Server/sqlite3/storage.ide
 /.vs/BasicBot/v15/Server/sqlite3/db.lock
+/.vs/VSWorkspaceState.json
+/.vs/BasicBot/v15/.suo
+/.vs/config/applicationhost.config
