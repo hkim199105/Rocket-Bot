@@ -332,10 +332,14 @@ namespace Microsoft.BotBuilderSamples
                         // Find and return the entity type and score.
                         var entType = o.수량[0].type;
                         var entScore = o.수량[0].score;
-                        var entValue = o.수량[0].value;
-                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + o.수량[0];
+                        var entValue = o.수량[0].text;
+                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
 
-                        return result;
+                        //return result;
+                    }
+                    else
+                    {
+                        result = "수량Entity 없음\n";
                     }
                 }
 
@@ -348,7 +352,8 @@ namespace Microsoft.BotBuilderSamples
                         // Find and return the entity type and score.
                         var entType = o.종목[0].type;
                         var entScore = o.종목[0].score;
-                        result = "종목Entity: " + entType + ", Score: " + entScore + ".";
+                        var entValue = o.종목[0].text;
+                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
                         return result;
                     }
