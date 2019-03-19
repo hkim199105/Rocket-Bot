@@ -13,7 +13,6 @@ using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -347,8 +346,7 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.종목[0].type;
                         var entScore = o.종목[0].score;
                         var entValue = o.종목[0].text;
-                        var trim = Regex.Replace(entValue, @"s", "");
-                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", Trim: " + trim + ", json: " + o.종목[0] + "\n";
+                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
                         return result;
                     }
