@@ -130,7 +130,7 @@ namespace Microsoft.BotBuilderSamples
                                     break;
                                 
                                 case BuyIntent:
-                                    await dc.Context.SendActivityAsync(topIntent);
+                                    await dc.Context.SendActivityAsync("TESTTTTTTTTTT");
                                     break;
                                     
                                 case SellIntent:
