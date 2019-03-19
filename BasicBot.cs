@@ -100,11 +100,13 @@ namespace Microsoft.BotBuilderSamples
                 // Inform the user if LUIS used an entity.
                 if (entityFound.ToString() != string.Empty)
                 {
-                    await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                    await dc.Context.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                    //await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
                 }
                 else
                 {
-                    await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                    await dc.Context.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                    //await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
                 }
 
 
@@ -333,7 +335,7 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.수량[0].type;
                         var entScore = o.수량[0].score;
                         var entValue = o.수량[0].text;
-                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
+                        result = result + "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
 
                         //return result;
                     }
@@ -353,9 +355,9 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.종목[0].type;
                         var entScore = o.종목[0].score;
                         var entValue = o.종목[0].text;
-                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
+                        result = result + "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
-                        return result;
+                        //return result;
                     }
                 }
             }
