@@ -333,7 +333,7 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.수량[0].type;
                         var entScore = o.수량[0].score;
                         var entValue = o.수량[0].value;
-                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue;
+                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + o.수량[0];
 
                         return result;
                     }
