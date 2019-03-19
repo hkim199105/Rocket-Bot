@@ -314,9 +314,9 @@ namespace Microsoft.BotBuilderSamples
                         // Find and return the entity type and score.
                         var entType = o.단가[0].type;
                         var entScore = o.단가[0].score;
-                        result = "단가Entity: " + entType + ", Score: " + entScore + ".";
+                        result = result + "단가Entity: " + entType + ", Score: " + entScore + ".";
 
-                        return result;
+                        //return result;
                     }
                 }
 
@@ -330,9 +330,9 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.수량[0].type;
                         var entScore = o.수량[0].score;
                         var entValue = o.수량[0].text;
-                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
+                        result = result + "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
 
-                        return result;
+                        //return result;
                     }
                 }
 
@@ -346,9 +346,10 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.종목[0].type;
                         var entScore = o.종목[0].score;
                         var entValue = o.종목[0].text;
-                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
+                        entValue = entValue.Replace(" ", string.Empty);
+                        result = result + "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
-                        return result;
+                        //return result;
                     }
                 }
             }
