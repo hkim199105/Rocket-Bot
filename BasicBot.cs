@@ -27,6 +27,7 @@ namespace Microsoft.BotBuilderSamples
         public const string NoneIntent = "None";
         public const string BuyIntent = "주식매수";
         public const string SellIntent = "주식매도";
+        public const string ModifyIntent = "주식정정";
 
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
