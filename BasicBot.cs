@@ -91,7 +91,7 @@ namespace Microsoft.BotBuilderSamples
                 var topScoringIntent = luisResults?.GetTopScoringIntent();
 
                 var topIntent = topScoringIntent.Value.intent;
-                
+
                 // update greeting state with any entities captured
                 await UpdateGreetingState(luisResults, dc.Context);
 
@@ -108,10 +108,10 @@ namespace Microsoft.BotBuilderSamples
 
                 // Continue the current dialog
                 var dialogResult = await dc.ContinueDialogAsync();
-                
+
                 // See if LUIS found and used an entity to determine user intent.
                 var entityFound = ParseLuisForEntities(luisResults);
-                
+
                 // if no one has responded,
                 if (!dc.Context.Responded)
                 {
@@ -346,13 +346,20 @@ namespace Microsoft.BotBuilderSamples
                         var entType = o.종목[0].type;
                         var entScore = o.종목[0].score;
                         var entValue = o.종목[0].text;
-                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
+                        result = "종목1Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
                         return result;
                     }
                 }
             }
             // No entities were found, empty string returned.
+            return result;
+        }
+
+        private string ParseLuisForEachEntities(RecognizerResult recognizerResult)
+        {
+            var result = string.Empty;
+
             return result;
         }
     }
