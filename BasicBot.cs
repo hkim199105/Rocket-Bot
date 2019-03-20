@@ -316,7 +316,7 @@ namespace Microsoft.BotBuilderSamples
                         var entScore = o.단가[0].score;
                         result = "단가Entity: " + entType + ", Score: " + entScore + ".";
 
-                        return result;
+                        //return result;
                     }
                 }
 
@@ -332,7 +332,7 @@ namespace Microsoft.BotBuilderSamples
                         var entValue = o.수량[0].text;
                         result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
 
-                        return result;
+                        //return result;
                     }
                 }
 
@@ -348,7 +348,7 @@ namespace Microsoft.BotBuilderSamples
                         var entValue = o.종목[0].text;
                         result = "종목1Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
 
-                        return result;
+                        //return result;
                     }
                 }
             }
