@@ -303,7 +303,7 @@ namespace Microsoft.BotBuilderSamples
                 var stockPrice = JObject.Parse(entity.Value.ToString())["단가"];
                 var stockQuantity = JObject.Parse(entity.Value.ToString())["수량"];
                 var stockName = JObject.Parse(entity.Value.ToString())["종목"];
-
+                
                 // We will return info on the first entity found.
                 if (stockPrice != null)
                 {
@@ -353,13 +353,6 @@ namespace Microsoft.BotBuilderSamples
                 }
             }
             // No entities were found, empty string returned.
-            return result;
-        }
-
-        private string ParseLuisForEachEntities(RecognizerResult recognizerResult)
-        {
-            var result = string.Empty;
-
             return result;
         }
     }
