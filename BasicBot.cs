@@ -148,6 +148,10 @@ namespace Microsoft.BotBuilderSamples
                                         await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
                                     }
 
+                                    var buyCard = CreateAdaptiveCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json");
+                                    var response = CreateResponse(activity, buyCard);
+                                    await dc.Context.SendActivityAsync(response);
+
                                     break;
 
                                 case SellIntent:
@@ -181,7 +185,7 @@ namespace Microsoft.BotBuilderSamples
                         // To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
                         if (member.Id != activity.Recipient.Id)
                         {
-                            var welcomeCard = CreateAdaptiveCardAttachment();
+                            var welcomeCard = CreateAdaptiveCardAttachment(@".\Dialogs\Welcome\Resources\welcomeCard.json");
                             var response = CreateResponse(activity, welcomeCard);
                             await dc.Context.SendActivityAsync(response);
                         }
@@ -236,10 +240,9 @@ namespace Microsoft.BotBuilderSamples
         }
 
         // Load attachment from file.
-        private Attachment CreateAdaptiveCardAttachment()
+        private Attachment CreateAdaptiveCardAttachment(string JsonDirectory)
         {
-            var adaptiveCard = File.ReadAllText(@".\Dialogs\Welcome\Resources\welcomeCard.json", Encoding.GetEncoding(51949));    //51949: euc-kr
-            Console.WriteLine(adaptiveCard);
+            var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));    //51949: euc-kr
             return new Attachment()
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
