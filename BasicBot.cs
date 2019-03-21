@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -49,6 +50,8 @@ namespace Microsoft.BotBuilderSamples
         /// <param name="accessors">Bot State Accessors.</param>
         public BasicBot(BotServices services, UserState userState, ConversationState conversationState, ILoggerFactory loggerFactory)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
             _conversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
@@ -235,7 +238,8 @@ namespace Microsoft.BotBuilderSamples
         // Load attachment from file.
         private Attachment CreateAdaptiveCardAttachment()
         {
-            var adaptiveCard = File.ReadAllText(@".\Dialogs\Welcome\Resources\welcomeCard.json");
+            var adaptiveCard = File.ReadAllText(@".\Dialogs\Welcome\Resources\welcomeCard.json", Encoding.GetEncoding(51949));    //51949: euc-kr
+            Console.WriteLine(adaptiveCard);
             return new Attachment()
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
