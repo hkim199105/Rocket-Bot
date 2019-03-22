@@ -307,76 +307,20 @@ namespace Microsoft.BotBuilderSamples
             // recognizerResult.Entities returns type JObject.
             foreach (var entity in recognizerResult.Entities)
             {
-                // Parse JObject for a known entity types: Appointment, Meeting, and Schedule.
-                var stockPrice = JObject.Parse(entity.Value.ToString())["단가"];
-                var stockQuantity = JObject.Parse(entity.Value.ToString())["수량"];
-                var stockName = JObject.Parse(entity.Value.ToString())["종목"];
-                
                 var token = entity.Value.ToString();
                 dynamic d = JsonConvert.DeserializeObject<dynamic>(token);
                 if (d.수량[0] != null)
                 {
-                    Console.WriteLine(d.수량[0].text);
                     result += d.수량[0].text;
-                    Console.WriteLine("==========");
+                    result += "|SEP|";
                 }
 
                 if (d.종목[0] != null)
                 {
-                    Console.WriteLine(d.종목[0].text);
                     result += d.종목[0].text;
-                    Console.WriteLine("==========");
+                    result += "|SEP|";
                 }
                 return result;
-                /*
-                // We will return info on the first entity found.
-                if (stockPrice != null)
-                {
-                    // use JsonConvert to convert entity.Value to a dynamic object.
-                    dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
-                    if (o.단가[0] != null)
-                    {
-                        // Find and return the entity type and score.
-                        var entType = o.단가[0].type;
-                        var entScore = o.단가[0].score;
-                        result = "단가Entity: " + entType + ", Score: " + entScore + ".";
-
-                        return result;
-                    }
-                }
-
-                if (stockQuantity != null)
-                {
-                    // use JsonConvert to convert entity.Value to a dynamic object.
-                    dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
-                    if (o.수량[0] != null)
-                    {
-                        // Find and return the entity type and score.
-                        var entType = o.수량[0].type;
-                        var entScore = o.수량[0].score;
-                        var entValue = o.수량[0].text;
-                        result = "수량Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.수량[0] + "\n";
-
-                        return result;
-                    }
-                }
-
-                if (stockName != null)
-                {
-                    // use JsonConvert to convert entity.Value to a dynamic object.
-                    dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
-                    if (o.종목[0] != null)
-                    {
-                        // Find and return the entity type and score.
-                        var entType = o.종목[0].type;
-                        var entScore = o.종목[0].score;
-                        var entValue = o.종목[0].text;
-                        result = "종목Entity: " + entType + ", Score: " + entScore + ", Value: " + entValue + ", json: " + o.종목[0] + "\n";
-
-                        return result;
-                    }
-                }
-                */
             }
             // No entities were found, empty string returned.
             return result;
