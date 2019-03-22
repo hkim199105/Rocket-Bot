@@ -141,6 +141,12 @@ namespace Microsoft.BotBuilderSamples
                                     // Inform the user if LUIS used an entity.
                                     if (entityFound.ToString() != string.Empty)
                                     {
+                                        string[] cutEntity = entityFound.Split("|SEP|");
+                                        await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
+                                        foreach (var cutEntityValue in cutEntity)
+                                        {
+                                            await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
+                                        }
                                         await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
                                     }
                                     else
@@ -306,18 +312,33 @@ namespace Microsoft.BotBuilderSamples
             // recognizerResult.Entities returns type JObject.
             foreach (var entity in recognizerResult.Entities)
             {
-                var token = entity.Value.ToString();
-                dynamic d = JsonConvert.DeserializeObject<dynamic>(token);
-                if (d.수량[0] != null)
+                // Parse JObject for a known entity types: Appointment, Meeting, and Schedule.
+                var stockPrice = JObject.Parse(entity.Value.ToString())["단가"];
+                var stockQuantity = JObject.Parse(entity.Value.ToString())["수량"];
+                var stockName = JObject.Parse(entity.Value.ToString())["종목"];
+
+                // use JsonConvert to convert entity.Value to a dynamic object.
+                dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
+
+                // We will return info on the first entity found.
+                if (stockQuantity != null)
                 {
-                    result += d.수량[0].text;
-                    result += "|SEP|";
+                    if (o.수량[0] != null)
+                    {
+                        result += o.수량[0].text;
+                        result += "|SEP|";
+                    }
                 }
 
-                if (d.종목[0] != null)
+                if (stockName != null)
                 {
-                    result += d.종목[0].text;
-                    result += "|SEP|";
+                    if (o.종목[0] != null)
+                    {
+                        //var tempName = o.종목[0].text;
+                        //tempName = tempName.replaceAll("\\p{Z}", "");
+                        result += o.종목[0].text;
+                        result += "|SEP|";
+                    }
                 }
                 return result;
             }
