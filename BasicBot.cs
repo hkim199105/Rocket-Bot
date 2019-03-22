@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
@@ -29,7 +30,7 @@ namespace Microsoft.BotBuilderSamples
         public const string BuyIntent = "주식매수";
         public const string SellIntent = "주식매도";
         public const string ModifyIntent = "주식정정";
-
+        
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
         /// In the .bot file, multiple instances of LUIS can be configured.
@@ -236,6 +237,7 @@ namespace Microsoft.BotBuilderSamples
         private Attachment CreateAdaptiveCardAttachment()
         {
             var adaptiveCard = File.ReadAllText(@".\Dialogs\Welcome\Resources\welcomeCard.json");
+            
             return new Attachment()
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
@@ -304,6 +306,23 @@ namespace Microsoft.BotBuilderSamples
                 var stockQuantity = JObject.Parse(entity.Value.ToString())["수량"];
                 var stockName = JObject.Parse(entity.Value.ToString())["종목"];
                 
+                var token = entity.Value.ToString();
+                dynamic d = JsonConvert.DeserializeObject<dynamic>(token);
+                if (d.수량[0] != null)
+                {
+                    Console.WriteLine(d.수량[0].text);
+                    result += d.수량[0].text;
+                    Console.WriteLine("==========");
+                }
+
+                if (d.종목[0] != null)
+                {
+                    Console.WriteLine(d.종목[0].text);
+                    result += d.종목[0].text;
+                    Console.WriteLine("==========");
+                }
+                return result;
+                /*
                 // We will return info on the first entity found.
                 if (stockPrice != null)
                 {
@@ -351,6 +370,7 @@ namespace Microsoft.BotBuilderSamples
                         return result;
                     }
                 }
+                */
             }
             // No entities were found, empty string returned.
             return result;
