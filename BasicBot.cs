@@ -242,7 +242,7 @@ namespace Microsoft.BotBuilderSamples
         // Load attachment from file.
         private Attachment CreateAdaptiveCardAttachment(string JsonDirectory)
         {
-            var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));    //51949: euc-kr
+            var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));        //51949: euc-kr
             return new Attachment()
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
