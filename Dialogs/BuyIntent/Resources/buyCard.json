@@ -1,0 +1,12 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "actions": [
+    {
+        "type": "Action.OpenUrl",
+        "title": "주식 살래요? 여기 눌러보세요.",
+        "url": "ns://webpop.shinhaninvest.com?data=&isPop=Y&path=naev850003"
+    }
+  ]
+}

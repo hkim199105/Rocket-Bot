@@ -50,6 +50,8 @@ namespace Microsoft.BotBuilderSamples
         /// <param name="accessors">Bot State Accessors.</param>
         public BasicBot(BotServices services, UserState userState, ConversationState conversationState, ILoggerFactory loggerFactory)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             _services = services ?? throw new ArgumentNullException(nameof(services));
             _userState = userState ?? throw new ArgumentNullException(nameof(userState));
             _conversationState = conversationState ?? throw new ArgumentNullException(nameof(conversationState));
@@ -146,6 +148,10 @@ namespace Microsoft.BotBuilderSamples
                                         await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
                                     }
 
+                                    var buyCard = CreateAdaptiveCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json");
+                                    var response = CreateResponse(activity, buyCard);
+                                    await dc.Context.SendActivityAsync(response);
+
                                     break;
 
                                 case SellIntent:
@@ -179,7 +185,7 @@ namespace Microsoft.BotBuilderSamples
                         // To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
                         if (member.Id != activity.Recipient.Id)
                         {
-                            var welcomeCard = CreateAdaptiveCardAttachment();
+                            var welcomeCard = CreateAdaptiveCardAttachment(@".\Dialogs\Welcome\Resources\welcomeCard.json");
                             var response = CreateResponse(activity, welcomeCard);
                             await dc.Context.SendActivityAsync(response);
                         }
@@ -234,7 +240,7 @@ namespace Microsoft.BotBuilderSamples
         }
 
         // Load attachment from file.
-        private Attachment CreateAdaptiveCardAttachment()
+        private Attachment CreateAdaptiveCardAttachment(string JsonDirectory)
         {
             var adaptiveCard = File.ReadAllText(@".\Dialogs\Welcome\Resources\welcomeCard.json");
             
