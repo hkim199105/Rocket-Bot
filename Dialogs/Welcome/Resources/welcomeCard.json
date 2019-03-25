@@ -4,9 +4,9 @@
   "version": "1.0",
   "body": [
     {
-        "type": "Image",
-        "url": "https://www.shareicon.net/download/2016/08/18/815017_rocket_512x512.png",
-        "size": "stretch"
+      "type": "Image",
+      "url": "https://www.shareicon.net/download/2016/08/18/815017_rocket_512x512.png",
+      "size": "stretch"
     },
     {
       "type": "TextBlock",
@@ -21,16 +21,22 @@
       "type": "TextBlock",
       "size": "default",
       "isSubtle": "yes",
-      "text": "안녕하세요, 로켓봇입니다. '주식 살래' 라고 말해보세요.",
+      "text": "안녕하세요, 로켓봇입니다. 아래 원하는 메뉴를 클릭하시거나, '[종목명] [수량]주 현재가로 살래' 라고 말해보세요.",
       "wrap": true,
       "maxLines": 0
     }
   ],
   "actions": [
     {
-        "type": "Action.OpenUrl",
-        "title": "주식 매수",
-        "url": "ns://webpop.shinhaninvest.com?data=&isPop=Y&path=naev850003"
+      "type": "Action.OpenUrl",
+      "title": "현재가",
+      "url": "ns://webpop.shinhaninvest.com?data=&isPop=Y&path=naev850003"
+
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "주식매매",
+      "url": "ns://webpop.shinhaninvest.com?data=&isPop=Y&path=naev850003"
     }
   ]
 }
