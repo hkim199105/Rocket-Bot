@@ -316,7 +316,7 @@ namespace Microsoft.BotBuilderSamples
                 var stockPrice = JObject.Parse(entity.Value.ToString())["단가"];
                 var stockQuantity = JObject.Parse(entity.Value.ToString())["수량"];
                 var stockName = JObject.Parse(entity.Value.ToString())["종목"];
-
+                
                 // use JsonConvert to convert entity.Value to a dynamic object.
                 dynamic o = JsonConvert.DeserializeObject<dynamic>(entity.Value.ToString());
 
@@ -325,21 +325,78 @@ namespace Microsoft.BotBuilderSamples
                 {
                     if (o.수량[0] != null)
                     {
-                        result += o.수량[0].text;
+                        string tempQ = o.수량[0].text;
+                        if (tempQ.Contains("주"))
+                        {
+                            tempQ = tempQ.Replace("주", "");
+                        }
+                        else if (tempQ.Contains("개"))
+                        {
+                            tempQ = tempQ.Replace("개", "");
+                        }
+                        result += tempQ;
                         result += "|SEP|";
                     }
+                }
+                else
+                {
+                    result += "noquantity";
+                    result += "|SEP|";
                 }
 
                 if (stockName != null)
                 {
                     if (o.종목[0] != null)
                     {
-                        //var tempName = o.종목[0].text;
-                        //tempName = tempName.replaceAll("\\p{Z}", "");
                         result += o.종목[0].text;
                         result += "|SEP|";
                     }
                 }
+                else
+                {
+                    result += "nostock";
+                    result += "|SEP|";
+                }
+
+                if (stockPrice != null)
+                {
+                    if (o.단가[0] != null)
+                    {
+                        string tempQ = o.단가[0].text;
+                        if (tempQ.Contains("원"))
+                        {
+                            tempQ = tempQ.Replace("원", "");
+                        }
+                        else if (tempQ.Contains("시장가"))
+                        {
+                            tempQ = tempQ.Replace("시장가", "mp");
+                        }
+                        else if (tempQ.Contains("현재가"))
+                        {
+                            tempQ = tempQ.Replace("현재가", "cp");
+                        }
+                        else if (tempQ.Contains("하한가"))
+                        {
+                            tempQ = tempQ.Replace("하한가", "lp");
+                        }
+                        else if (tempQ.Contains("상한가"))
+                        {
+                            tempQ = tempQ.Replace("상한가", "hp");
+                        }
+                        else if (tempQ.Contains("시간외단일가"))
+                        {
+                            tempQ = tempQ.Replace("시간외단일가", "tp");
+                        }
+                        result += tempQ;
+                        result += "|SEP|";
+                    }
+                }
+                else
+                {
+                    result += "noprice";
+                    result += "|SEP|";
+                }
+
                 return result;
             }
             // No entities were found, empty string returned.
