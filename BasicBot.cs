@@ -154,7 +154,7 @@ namespace Microsoft.BotBuilderSamples
                                         await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
                                     }
 
-                                    var buyCard = CreateAdaptiveCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json");
+                                    var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                     var response = CreateResponse(activity, buyCard);
                                     await dc.Context.SendActivityAsync(response);
 
@@ -191,7 +191,7 @@ namespace Microsoft.BotBuilderSamples
                         // To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
                         if (member.Id != activity.Recipient.Id)
                         {
-                            var welcomeCard = CreateAdaptiveCardAttachment(@".\Dialogs\Welcome\Resources\welcomeCard.json");
+                            var welcomeCard = CreateWelcomeCardAttachment(@".\Dialogs\Welcome\Resources\welcomeCard.json");
                             var response = CreateResponse(activity, welcomeCard);
                             await dc.Context.SendActivityAsync(response);
                         }
@@ -246,9 +246,35 @@ namespace Microsoft.BotBuilderSamples
         }
 
         // Load attachment from file.
-        private Attachment CreateAdaptiveCardAttachment(string JsonDirectory)
+        private Attachment CreateWelcomeCardAttachment(string JsonDirectory)
+        {
+            var WelcomeCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));
+            return new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(WelcomeCard),
+            };
+        }
+
+        private Attachment CreateBuyCardAttachment(string JsonDirectory, string entity)
         {
             var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));        //51949: euc-kr
+            var json = JObject.Parse(adaptiveCard);
+            var json2 = new JObject();
+            var actions = new JArray();
+            json2.Add("type", "Action.OpenUrl");
+            json2.Add("title", "\"주식 살래요? 여기 눌러보세요.\"");
+            string url = "\"ns://webpop.shinhaninvest.com?data=";
+            if (entity.ToString() != string.Empty)
+            {
+                url += entity;
+            }
+            url += "&isPop=Y&path=naev850003\"";
+            json2.Add("url", url);
+            actions.Add(json2);
+            json.Add("actions", actions);
+            adaptiveCard = json.ToString();
+
             return new Attachment()
             {
                 ContentType = "application/vnd.microsoft.card.adaptive",
