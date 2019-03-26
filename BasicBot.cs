@@ -263,7 +263,7 @@ namespace Microsoft.BotBuilderSamples
             var json2 = new JObject();
             var actions = new JArray();
             json2.Add("type", "Action.OpenUrl");
-            json2.Add("title", "\"hello.\"");
+            json2.Add("title", "\"주식살래???.\"");
             string url = "\"ns://webpop.shinhaninvest.com?data=";
             if (entity.ToString() != string.Empty)
             {
@@ -273,7 +273,7 @@ namespace Microsoft.BotBuilderSamples
             json2.Add("url", url);
             actions.Add(json2);
             json.Add("actions", actions);
-            adaptiveCard = json.ToString();
+            adaptiveCard = File.ReadAllText(json.ToString(), Encoding.GetEncoding(51949));
 
             return new Attachment()
             {
