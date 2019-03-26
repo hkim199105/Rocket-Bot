@@ -263,7 +263,7 @@ namespace Microsoft.BotBuilderSamples
             var json2 = new JObject();
             var actions = new JArray();
             json2.Add("type", "Action.OpenUrl");
-            json2.Add("title", "\"주식 살래요? 여기 눌러보세요.\"");
+            json2.Add("title", "\"hello.\"");
             string url = "\"ns://webpop.shinhaninvest.com?data=";
             if (entity.ToString() != string.Empty)
             {
