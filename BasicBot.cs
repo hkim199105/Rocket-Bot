@@ -259,21 +259,67 @@ namespace Microsoft.BotBuilderSamples
         private Attachment CreateBuyCardAttachment(string JsonDirectory, string entity)
         {
             var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));        //51949: euc-kr
+            System.Text.Encoding euckr = System.Text.Encoding.GetEncoding(51949);
+
             var json = JObject.Parse(adaptiveCard);
             var json2 = new JObject();
             var actions = new JArray();
             json2.Add("type", "Action.OpenUrl");
-            json2.Add("title", "\"주식살래???.\"");
             string url = "\"ns://webpop.shinhaninvest.com?data=";
+            string title = string.Empty;
+            string price = string.Empty;
             if (entity.ToString() != string.Empty)
             {
-                url += entity;
+                string[] arr_Entity = entity.Split("|SEP|");//수량, 종목, 가격
+                if (!arr_Entity[1].Equals("nostock"))
+                {
+                    title = title + arr_Entity[1]+" ";
+                }
+                if (!arr_Entity[0].Equals("noquantity"))
+                {
+                    title = title + arr_Entity[0] + "주 ";
+                }
+
+                if (!arr_Entity[2].Equals("noprice"))
+                {
+                    price = arr_Entity[2];
+                    if (price.Contains("원"))
+                    {
+                        price = price.Replace("원", "");
+                    }
+                    else if (price.Contains("시장가"))
+                    {
+                        price = price.Replace("시장가", "mp");
+                    }
+                    else if (price.Contains("현재가"))
+                    {
+                        price = price.Replace("현재가", "cp");
+                    }
+                    else if (price.Contains("하한가"))
+                    {
+                        price = price.Replace("하한가", "lp");
+                    }
+                    else if (price.Contains("상한가"))
+                    {
+                        price = price.Replace("상한가", "hp");
+                    }
+                    else if (price.Contains("시간외단일가"))
+                    {
+                        price = price.Replace("시간외단일가", "tp");
+                    }
+                    title = title + arr_Entity[2];
+                }
+                title += " 매수하시겠어요? 이곳을 클릭해주세요";
+                url = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
             }
+            byte[] euckrBytes = euckr.GetBytes(title);
+            string decodedStringByEUCKR = euckr.GetString(euckrBytes);
+            json2.Add("title", decodedStringByEUCKR);
             url += "&isPop=Y&path=naev850003\"";
             json2.Add("url", url);
             actions.Add(json2);
             json.Add("actions", actions);
-            adaptiveCard = File.ReadAllText(json.ToString(), Encoding.GetEncoding(51949));
+            adaptiveCard = json.ToString();
 
             return new Attachment()
             {
@@ -389,30 +435,6 @@ namespace Microsoft.BotBuilderSamples
                     if (o.단가[0] != null)
                     {
                         string tempQ = o.단가[0].text;
-                        if (tempQ.Contains("원"))
-                        {
-                            tempQ = tempQ.Replace("원", "");
-                        }
-                        else if (tempQ.Contains("시장가"))
-                        {
-                            tempQ = tempQ.Replace("시장가", "mp");
-                        }
-                        else if (tempQ.Contains("현재가"))
-                        {
-                            tempQ = tempQ.Replace("현재가", "cp");
-                        }
-                        else if (tempQ.Contains("하한가"))
-                        {
-                            tempQ = tempQ.Replace("하한가", "lp");
-                        }
-                        else if (tempQ.Contains("상한가"))
-                        {
-                            tempQ = tempQ.Replace("상한가", "hp");
-                        }
-                        else if (tempQ.Contains("시간외단일가"))
-                        {
-                            tempQ = tempQ.Replace("시간외단일가", "tp");
-                        }
                         result += tempQ;
                         result += "|SEP|";
                     }
