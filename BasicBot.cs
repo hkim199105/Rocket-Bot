@@ -162,8 +162,29 @@ namespace Microsoft.BotBuilderSamples
 
                                 case SellIntent:
                                     await dc.Context.SendActivityAsync(topIntent);
+
+                                    // Inform the user if LUIS used an entity.
+                                    if (entityFound.ToString() != string.Empty)
+                                    {
+                                        string[] cutEntity = entityFound.Split("|SEP|");
+                                        await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
+                                        foreach (var cutEntityValue in cutEntity)
+                                        {
+                                            await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
+                                        }
+                                        await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                    }
+                                    else
+                                    {
+                                        await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                                    }
+
+                                    var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
+                                    var sell_response = CreateResponse(activity, sellCard);
+                                    await dc.Context.SendActivityAsync(sell_response);
                                     break;
                             }
+
                             break;
 
                         case DialogTurnStatus.Waiting:
@@ -263,21 +284,31 @@ namespace Microsoft.BotBuilderSamples
 
             var json = JObject.Parse(adaptiveCard);
             var json2 = new JObject();
+            var json1 = new JObject();
             var actions = new JArray();
+            var body = new JArray();
+
+            json1.Add("type", "TextBlock");
+            json1.Add("size", "default");
+            json1.Add("wrap", true);
+            json1.Add("maxLines", 0);
+
             json2.Add("type", "Action.OpenUrl");
             string url = "\"ns://webpop.shinhaninvest.com?data=";
-            string title = string.Empty;
+            string text = string.Empty;
+            string title = "매수하기";
             string price = string.Empty;
             if (entity.ToString() != string.Empty)
             {
                 string[] arr_Entity = entity.Split("|SEP|");//수량, 종목, 가격
                 if (!arr_Entity[1].Equals("nostock"))
                 {
-                    title = title + arr_Entity[1]+" ";
+                    text = text + arr_Entity[1]+" ";
                 }
+
                 if (!arr_Entity[0].Equals("noquantity"))
                 {
-                    title = title + arr_Entity[0] + "주 ";
+                    text = text + arr_Entity[0] + "주 ";
                 }
 
                 if (!arr_Entity[2].Equals("noprice"))
@@ -307,17 +338,120 @@ namespace Microsoft.BotBuilderSamples
                     {
                         price = price.Replace("시간외단일가", "tp");
                     }
-                    title = title + arr_Entity[2];
+
+                    text = text + arr_Entity[2];
                 }
-                title += " 매수하시겠어요? 이곳을 클릭해주세요";
+
+                text += " 매수하시겠어요?";
                 url = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
             }
-            byte[] euckrBytes = euckr.GetBytes(title);
-            string decodedStringByEUCKR = euckr.GetString(euckrBytes);
-            json2.Add("title", decodedStringByEUCKR);
+            //한글 문자 인코딩
+            byte[] euckrTextBytes = euckr.GetBytes(text);
+            byte[] euckrTitileBytes = euckr.GetBytes(title);
+            string decodedTitleEUCKR = euckr.GetString(euckrTitileBytes);
+            string decodedTextEUCKR = euckr.GetString(euckrTextBytes);
+
+            json1.Add("text", decodedTextEUCKR);
+            json2.Add("title", decodedTitleEUCKR);
             url += "&isPop=Y&path=naev850003\"";
             json2.Add("url", url);
+
+            body.Add(json1);
             actions.Add(json2);
+            json.Add("body", body);
+            json.Add("actions", actions);
+            adaptiveCard = json.ToString();
+
+            return new Attachment()
+            {
+                ContentType = "application/vnd.microsoft.card.adaptive",
+                Content = JsonConvert.DeserializeObject(adaptiveCard),
+            };
+        }
+
+        private Attachment CreateSellCardAttachment(string JsonDirectory, string entity)
+        {
+            var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));        //51949: euc-kr
+            System.Text.Encoding euckr = System.Text.Encoding.GetEncoding(51949);
+
+            var json = JObject.Parse(adaptiveCard);
+            var json2 = new JObject();
+            var json1 = new JObject();
+            var actions = new JArray();
+            var body = new JArray();
+
+            json1.Add("type", "TextBlock");
+            json1.Add("size", "default");
+            json1.Add("wrap", true);
+            json1.Add("maxLines", 0);
+
+            json2.Add("type", "Action.OpenUrl");
+            string url = "\"ns://webpop.shinhaninvest.com?data=";
+            string text = string.Empty;
+            string title = "매도하기";
+            string price = string.Empty;
+            if (entity.ToString() != string.Empty)
+            {
+                string[] arr_Entity = entity.Split("|SEP|");//수량, 종목, 가격
+                if (!arr_Entity[1].Equals("nostock"))
+                {
+                    text = text + arr_Entity[1] + " ";
+                }
+
+                if (!arr_Entity[0].Equals("noquantity"))
+                {
+                    text = text + arr_Entity[0] + "주 ";
+                }
+
+                if (!arr_Entity[2].Equals("noprice"))
+                {
+                    price = arr_Entity[2];
+                    if (price.Contains("원"))
+                    {
+                        price = price.Replace("원", "");
+                    }
+                    else if (price.Contains("시장가"))
+                    {
+                        price = price.Replace("시장가", "mp");
+                    }
+                    else if (price.Contains("현재가"))
+                    {
+                        price = price.Replace("현재가", "cp");
+                    }
+                    else if (price.Contains("하한가"))
+                    {
+                        price = price.Replace("하한가", "lp");
+                    }
+                    else if (price.Contains("상한가"))
+                    {
+                        price = price.Replace("상한가", "hp");
+                    }
+                    else if (price.Contains("시간외단일가"))
+                    {
+                        price = price.Replace("시간외단일가", "tp");
+                    }
+
+                    text = text + arr_Entity[2];
+                }
+
+                text += " 매도하시겠어요?";
+                url = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
+            }
+
+            //한글 문자 인코딩
+            byte[] euckrTextBytes = euckr.GetBytes(text);
+            byte[] euckrTitileBytes = euckr.GetBytes(title);
+            string decodedTitleEUCKR = euckr.GetString(euckrTitileBytes);
+            string decodedTextEUCKR = euckr.GetString(euckrTextBytes);
+
+            json1.Add("text", decodedTextEUCKR);
+            json2.Add("title", decodedTitleEUCKR);
+            url += "&isPop=Y&path=naev850003\"";
+            json2.Add("url", url);
+
+            body.Add(json1);
+            actions.Add(json2);
+            json.Add("body", body);
             json.Add("actions", actions);
             adaptiveCard = json.ToString();
 
