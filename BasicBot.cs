@@ -554,7 +554,9 @@ namespace Microsoft.BotBuilderSamples
                 {
                     if (o.종목[0] != null)
                     {
-                        result += o.종목[0].text;
+                        string tempN = o.종목[0].text;
+                        tempN = tempN.Replace(" ", "");
+                        result += tempN;
                         result += "|SEP|";
                     }
                 }
