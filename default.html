@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.botframework.com/botframework-webchat/master/webchat.js"></script>
+    <style>
+      html, body { height: 100% }
+      body { margin: 0 }
+
+      #webchat {
+        height: 100%;
+        width: 100%;
+      }
+
+      #helpButton {
+        left: 10px;
+        position: absolute;
+        top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="webchat" role="main"></div>
+    <button id="helpButton" type="button">Help</button>
+    <script>
+      const store = window.WebChat.createStore(
+      {},
+      ({ dispatch }) => next => action => {
+        if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+          const event = new Event('webchatincomingactivity');
+
+          event.data = action.payload.activity;
+          window.dispatchEvent(event);
+        }
+
+        return next(action);
+      });
+      
+      const attachmentMiddleware = () => next => card => {
+        switch (card.attachment.contentType) {
+          case 'application/vnd.microsoft.card.adaptive':
+            return next(card);
+
+          default:
+            return next(card);
+        }
+      };
+      
+      window.WebChat.renderWebChat({
+        directLine: window.WebChat.createDirectLine({ token: 'L3-ab5CJn8Q.dAA.QQA4AEMAWgBhAGYAdwBvAGIARwA3AEIAZQB6AFYAOAA2AEIANQBnAFYARwAtADQA.ixx8ZXPu1AE.OZPNb9MFfLc.6hI7ymKTSu1tfVMH34Dw9EHi2TiNrK9S6PSSnhyHbIY' }),
+        store,
+        //attachmentMiddleware: { attachmentMiddleware },
+        userID: 'YOUR_USER_ID',
+        username: 'Web Chat User',
+        locale: 'ko-KR',
+        botAvatarInitials: 'WC',
+        userAvatarInitials: 'WW'
+      }, document.getElementById('webchat'));
+      
+      document.querySelector('#helpButton').addEventListener('click', () => {
+        store.dispatch({
+          type: 'WEB_CHAT/RECEIVE_MESSAGE',
+          payload: { text: 'help' }
+        });
+        store.dispatch({
+          type: 'WEB_CHAT/SEND_MESSAGE',
+          payload: { text: 'help' }
+        });
+        store.dispatch({
+          type: 'WEB_CHAT/SET_SEND_BOX',
+          payload: { text: '기본 입력값 세팅' }
+        });
+      });
+
+      window.addEventListener('webchatincomingactivity', ({ data }) => {
+         console.log(`Received an activity of type "${ data.type }":`);
+         console.log(data);
+       });
+
+        document.querySelector('#webchat > *').focus();
+    </script>
+  </body>
+</html>
