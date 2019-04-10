@@ -25,7 +25,7 @@
       const store = window.WebChat.createStore(
         {},
         ({ dispatch }) => next => action => {
-          console.log('액션', action);
+          //console.log('액션', action);
           if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
             const event = new Event('webchatincomingactivity');
             event.data = action.payload.activity;
@@ -47,7 +47,7 @@
           switch (card.attachment.contentType) {
             //카드가 들어오는 경우....
             case 'application/vnd.microsoft.card.adaptive':
-              console.log(card.attachment.contentType);
+              //console.log(card.attachment.contentType);
               return "야야야";
 
             default:
@@ -65,15 +65,6 @@
         hideUploadButton: true,
       };
       
-      window.WebChat.renderWebChat({
-        directLine: window.WebChat.createDirectLine({ token: 'L3-ab5CJn8Q.dAA.TABLAG0AUQBPAGYAYgBWAE4ARAA5ADUAZwBRAG0AYQBqAFgAaABBAG4ARAAtADQA.3ubmLz_v1AE.o8kN3qGcftQ.5kuPQFFags9Y4BNHsQj00MrKxxWPs0U4cTHJ3vsfTdo' }),
-        store,
-        attachmentMiddleware: attachmentMiddleware,
-        userID: 'YOUR_USER_ID',
-        username: 'Web Chat User',
-        locale: 'ko-KR',
-        styleOptions
-      }, document.getElementById('webchat'));
       
       document.querySelector('#helpButton').addEventListener('click', () => {
         //메시지 보내기(UI로 출력)
@@ -149,7 +140,42 @@
         //console.log(`Received an activity of type "${ data.type }":`);
         //console.log(data);
       });
-      document.querySelector('#webchat > *').focus();
+      
+      
+        const url = "https://directline.botframework.com/v3/directline/tokens/generate";
+        const other_params = {
+            headers : { "content-type" : "application/json; charset=UTF-8", "Authorization" : "Bearer L3-ab5CJn8Q.-z9_Eii9MvnoPU-naRvEv0_LJH8bhswXuewQoCKHEKE"},
+            body : "",
+            method : "POST",
+            mode : "cors"
+        };
+
+        fetch(url, other_params)
+            .then(function(response) {
+            if (response.ok) {
+                //console.log(response.json());
+                response.json().then(function(result) {
+                  window.WebChat.renderWebChat({
+                    directLine: window.WebChat.createDirectLine({ token: result['token'] }),
+                    store,
+                    attachmentMiddleware: attachmentMiddleware,
+                    userID: 'YOUR_USER_ID',
+                    username: 'Web Chat User',
+                    locale: 'ko-KR',
+                    styleOptions
+                  }, document.getElementById('webchat'));
+                  //console.log(result['token']);
+                  
+                  document.querySelector('#webchat > *').focus();
+                });
+            } else {
+                throw new Error("Could not reach the API: " + response.statusText);
+            }
+        }).then(function(data) {
+          console.log(data.encoded);
+        }).catch(function(error) {
+          console.log(error.message);
+        });
     </script>
   </body>
 </html>
