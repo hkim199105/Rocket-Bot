@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.botframework.com/botframework-webchat/master/webchat.js"></script>
+    <style>
+      html, body { height: 100% }
+      body { margin: 0 }
+
+      #webchat {
+        height: 100%;
+        width: 100%;
+      }
+
+      #helpButton {
+        left: 10px;
+        position: absolute;
+        top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="webchat" role="main"></div>
+    <button id="helpButton" type="button">Help</button>
+    <script>
+      const store = window.WebChat.createStore(
+        {},
+        ({ dispatch }) => next => action => {
+          console.log('액션', action);
+          if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
+            const event = new Event('webchatincomingactivity');
+            event.data = action.payload.activity;
+            window.dispatchEvent(event);
+          }
+
+          return next(action);
+        }
+      );
+      
+      //들어오는 activity(대화) UI로 뿌려주기전 캐치, 여기서 값 조작 가능
+      const attachmentMiddleware = () => next => card => {
+        const { activity: { name, type } } = card;
+        
+        
+        if (type === 'event' && name === 'passwordInput') {
+          return;
+        } else {
+          switch (card.attachment.contentType) {
+            //카드가 들어오는 경우....
+            case 'application/vnd.microsoft.card.adaptive':
+              console.log(card.attachment.contentType);
+              return "야야야";
+
+            default:
+              return next(card);
+          }
+        }
+      };
+      
+      //css 커스터마이징. 더 많은 옵션은 아래 url 참고.
+      //https://github.com/Microsoft/BotFramework-WebChat/blob/master/packages/component/src/Styles/defaultStyleSetOptions.js
+      const styleOptions = {
+        botAvatarInitials: '로켓봇',
+        botAvatarImage: 'http://chittagongit.com//images/rocket-flat-icon/rocket-flat-icon-26.jpg',
+        userAvatarInitials: '나',
+        hideUploadButton: true,
+      };
+      
+      window.WebChat.renderWebChat({
+        directLine: window.WebChat.createDirectLine({ token: 'L3-ab5CJn8Q.dAA.TABLAG0AUQBPAGYAYgBWAE4ARAA5ADUAZwBRAG0AYQBqAFgAaABBAG4ARAAtADQA.3ubmLz_v1AE.o8kN3qGcftQ.5kuPQFFags9Y4BNHsQj00MrKxxWPs0U4cTHJ3vsfTdo' }),
+        store,
+        attachmentMiddleware: attachmentMiddleware,
+        userID: 'YOUR_USER_ID',
+        username: 'Web Chat User',
+        locale: 'ko-KR',
+        styleOptions
+      }, document.getElementById('webchat'));
+      
+      document.querySelector('#helpButton').addEventListener('click', () => {
+        //메시지 보내기(UI로 출력)
+        //store.dispatch({
+        //  type: 'WEB_CHAT/SEND_MESSAGE',
+        //  payload: { text: 'help' }
+        //});
+        
+        //메시지 보내기(UI엔 출력 안하고, background단에서)
+        //store.dispatch({
+        //  type: 'WEB_CHAT/SEND_MESSAGE_BACK',
+        //  payload: { text: 'help' }
+        //});
+        
+        //메시지 입력란에 값 입력
+        store.dispatch({
+          type: 'WEB_CHAT/SET_SEND_BOX',
+          payload: { text: '기본 입력값 세팅' }
+        });
+        
+        //메시지 지우기
+        //store.dispatch({
+        //  type: "DIRECT_LINE/DELETE_ACTIVITY",
+        //  payload: { activityID: "EDYgSIbq8GTCFJ2A3sco6a-4|0000001"" }
+        //});
+        
+        //메시지 받기
+        //기존 봇의 대답 <LI>를 복제해서 내용만 수정해서 보여주는 원리
+        /*
+        <li class="css-1qyo5rb hide-timestamp" role="listitem">
+          <div class="css-tyxksf css-2p02md">
+            <div aria-hidden="true" class="css-1dgbgmu avatar">
+              로켓봇
+              <div class="css-1tdb3h1 image" style="height: 100%; width: 100%;">
+              <img alt="" src="http://chittagongit.com//images/rocket-flat-icon/rocket-flat-icon-26.jpg">
+            </div>
+          </div>
+          <div class="content">
+            <div class="webchat__row attachment">
+              <div class="css-mhj5i1 attachment bubble">야야야</div>
+            </div>
+              <div aria-hidden="true" class="webchat__row">
+                <span class="css-1s8geyi timestamp transcript-timestamp">
+                  A minute ago
+                </span>
+                <div class="filler"></div>
+              </div>
+            </div>
+            <div class="filler"></div>
+          </div>
+        </li>
+        */
+        var mUL = document.getElementById('webchat').childNodes[0].childNodes[0].childNodes[0].childNodes[1];
+        var mLIs = mUL.childNodes;
+        //봇이 이전에 보낸 메시지 찾기(생긴거 똑같이 복제하기 위함. 클래스명이 대화마다 다르기 때문에 생성은 안됨. 기존 LI를 복제해야함.)
+        for (i = 0; i < mLIs.length; i++) {
+          //console.log(mLIs[i].tagName.toLowerCase()); //li
+          temp = mLIs[i].getElementsByClassName('from-user')
+          if (temp.length == 0) {
+            var targetLI = mLIs[i];
+            //메시지 복제
+            var mNewMessage = targetLI.cloneNode(true);
+            //메시지 내용 변경
+            mNewMessage.getElementsByClassName('content')[0].getElementsByClassName('attachment')[0].getElementsByClassName('bubble')[0].innerHTML = '123';
+            //복제한 메시지 출력
+            mUL.appendChild(mNewMessage);
+            break;
+          }
+        }
+      });
+
+      window.addEventListener('webchatincomingactivity', ({ data }) => {
+        //console.log(`Received an activity of type "${ data.type }":`);
+        //console.log(data);
+      });
+      document.querySelector('#webchat > *').focus();
+    </script>
+  </body>
+</html>
