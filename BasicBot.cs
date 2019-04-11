@@ -154,14 +154,15 @@ namespace Microsoft.BotBuilderSamples
                                             var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                             var response = CreateResponse(activity, buyCard);
                                             await dc.Context.SendActivityAsync(response);
+
+                                            // html에 이벤트만 전달 name으로 구분하면 됨
+                                            Activity reply = activity.CreateReply();
+                                            reply.Type = ActivityTypes.Event;
+                                            reply.Name = "buystock";
+                                            await dc.Context.SendActivityAsync(reply);
                                         }
                                         else{
                                             await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
-
-                                            Activity reply = activity.CreateReply();
-                                            reply.Type = ActivityTypes.Event;
-                                            reply.Text = null;
-                                            await dc.Context.SendActivityAsync(reply);
                                         }
                                     }
                                     else
