@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, width=device-width, target-densitydpi=medium-dpi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
     <script src="https://cdn.botframework.com/botframework-webchat/master/webchat.js"></script>
     <style>
       html, body { height: 100% }
@@ -21,7 +27,13 @@
   <body>
     <div id="webchat" role="main"></div>
     <button id="helpButton" type="button">Help</button>
-    <script>
+    <script>    
+      //화면이동
+      function openScreen(data, isPop, screenNo){
+          var gotoURL = "ns://webpop.shinhaninvest.com?data="+data+"&isPop="+isPop+"&path="+screenNo;
+          location.href = gotoURL;
+      }
+      
       function receiveMessage_Text(text) {
       //기존 봇의 대답 <LI>를 복제해서 내용만 수정해서 보여주는 원리
         var mUL = document.getElementById('webchat').childNodes[0].childNodes[0].childNodes[0].childNodes[1];
@@ -44,7 +56,7 @@
           }
         }
       }
-      
+
       function receiveMessage_AdaptiveCard(text, buttonTexts, buttonLinks) {
         var mUL = document.getElementById('webchat').childNodes[0].childNodes[0].childNodes[0].childNodes[1];
         var mLIs = mUL.childNodes;
@@ -69,7 +81,7 @@
               for (i = 0; i < buttonTexts.length; i++){
                 mContent +=
                         `<div style="height: 8px;"></div>
-                        <button onclick="window.open('` + buttonLinks[i] + `')" class="ac-pushButton style-default" aria-label="` + buttonTexts[i] + `" type="button" style="display: flex; align-items: center; justify-content: center; flex: 0 1 100%;">
+                        <button onclick='` + buttonLinks[i] + `' class="ac-pushButton style-default" aria-label="` + buttonTexts[i] + `" type="button" style="display: flex; align-items: center; justify-content: center; flex: 0 1 100%;">
                           <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">` + buttonTexts[i] + `</div>
                         </button>`
               }
@@ -91,7 +103,10 @@
       
       //주식주문 후 메시지
       function receiveMessage_AfterOrder(orderNo, quantity, stock, price, fee) {
-        receiveMessage_AdaptiveCard('<img src="https://image.freepik.com/free-vector/no-translate-detected_23-2147895655.jpg" style="max-height: 100%; min-width: 0px; width: 100%;"/><br>로켓 발사 완료! 주문이 완료되었습니다.<br><br>주문번호: ' + orderNo + '<br>종목: ' + stock + '<br>금액: ' + price + '<br>수량: ' + quantity + '<br>수수료: ' + fee, ['주식체결내역 보러가기'], ['https://naver.com'])
+        receiveMessage_AdaptiveCard(
+        '<img src="https://image.freepik.com/free-vector/no-translate-detected_23-2147895655.jpg" style="max-height: 100%; min-width: 0px; width: 100%;"/><br>로켓 발사 완료! 주문이 완료되었습니다.<br><br>주문번호: ' + orderNo + '<br>종목: ' + stock + '<br>금액: ' + price + '<br>수량: ' + quantity + '<br>수수료: ' + fee,
+        ['주식체결내역 보러가기'],
+        ['javascript:openScreen("", "N", "5006");'])
       }
       
       const store = window.WebChat.createStore(
