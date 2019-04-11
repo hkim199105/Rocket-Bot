@@ -1,6 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, width=device-width, target-densitydpi=medium-dpi">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
     <script src="https://cdn.botframework.com/botframework-webchat/master/webchat.js"></script>
     <style>
       html, body { height: 100% }
@@ -21,11 +27,92 @@
   <body>
     <div id="webchat" role="main"></div>
     <button id="helpButton" type="button">Help</button>
-    <script>
+    <script>    
+      //화면이동
+      function openScreen(data, isPop, screenNo){
+          var gotoURL = "ns://webpop.shinhaninvest.com?data="+data+"&isPop="+isPop+"&path="+screenNo;
+          location.href = gotoURL;
+      }
+      
+      function receiveMessage_Text(text) {
+      //기존 봇의 대답 <LI>를 복제해서 내용만 수정해서 보여주는 원리
+        var mUL = document.getElementById('webchat').childNodes[0].childNodes[0].childNodes[0].childNodes[1];
+        var mLIs = mUL.childNodes;
+        //봇이 이전에 보낸 메시지 찾기(생긴거 똑같이 복제하기 위함. 클래스명이 대화마다 다르기 때문에 생성은 안됨. 기존 LI를 복제해야함.)
+        for (i = 0; i < mLIs.length; i++) {
+          //console.log(mLIs[i].tagName.toLowerCase()); //li
+          temp = mLIs[i].getElementsByClassName('from-user')
+          if (temp.length == 0) {   //챗봇한테 받은 메시지div
+            var targetLI = mLIs[i];
+            if (targetLI.getElementsByClassName('content')[0].getElementsByClassName('message').length > 0) {   //일반 메시지div
+              //메시지 복제
+              var mNewMessage = targetLI.cloneNode(true);
+              //메시지 내용 변경
+              mNewMessage.getElementsByClassName('content')[0].getElementsByClassName('message')[0].firstChild.firstChild.firstChild.innerHTML = text;
+              //복제한 메시지 출력
+              mUL.appendChild(mNewMessage);
+              break;
+            }
+          }
+        }
+      }
+
+      function receiveMessage_AdaptiveCard(text, buttonTexts, buttonLinks) {
+        var mUL = document.getElementById('webchat').childNodes[0].childNodes[0].childNodes[0].childNodes[1];
+        var mLIs = mUL.childNodes;
+        //봇이 이전에 보낸 메시지 찾기(생긴거 똑같이 복제하기 위함. 클래스명이 대화마다 다르기 때문에 생성은 안됨. 기존 LI를 복제해야함.)
+        for (i = 0; i < mLIs.length; i++) {
+          temp = mLIs[i].getElementsByClassName('from-user')
+          if (temp.length == 0) {   //챗봇한테 받은 메시지div
+            var targetLI = mLIs[i];
+            if (targetLI.getElementsByClassName('content')[0].getElementsByClassName('attachment').length > 0) {   //카드 메시지div
+              //메시지 복제
+              var mNewMessage = targetLI.cloneNode(true);
+              //메시지 내용 변경
+              var mContent = 
+                `<div class="ac-container" tabindex="0" style="display: flex; flex-direction: column; justify-content: flex-start; box-sizing: border-box; flex: 0 0 auto; padding: 15px;">
+                  <div class="ac-textBlock" style="overflow: hidden; font-family: &quot;Segoe UI&quot;, Segoe, &quot;Segoe WP&quot;, &quot;Helvetica Neue&quot;, Helvetica, sans-serif; text-align: left; font-size: 14px; line-height: 18.62px; color: rgb(0, 0, 0); font-weight: 400; overflow-wrap: break-word; box-sizing: border-box; flex: 0 0 auto;">
+                    <p style="margin-top: 0px; width: 100%; margin-bottom: 0px;">` + text + `</p>
+                  </div>
+                  <div style="height: 8px; overflow: hidden;"></div>
+                  <div>
+                    <div style="overflow: hidden;">
+                      <div class="ac-actionSet" style="display: flex; flex-direction: column; align-items: stretch;">`;
+              for (i = 0; i < buttonTexts.length; i++){
+                mContent +=
+                        `<div style="height: 8px;"></div>
+                        <button onclick='` + buttonLinks[i] + `' class="ac-pushButton style-default" aria-label="` + buttonTexts[i] + `" type="button" style="display: flex; align-items: center; justify-content: center; flex: 0 1 100%;">
+                          <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">` + buttonTexts[i] + `</div>
+                        </button>`
+              }
+              
+              mContent +=
+                      `</div>
+                    </div>
+                    <div></div>
+                  </div>
+                </div>`;
+              mNewMessage.getElementsByClassName('content')[0].getElementsByClassName('attachment')[0].getElementsByClassName('bubble')[0].firstChild.innerHTML = mContent;
+              //복제한 메시지 출력
+              mUL.appendChild(mNewMessage);
+              break;
+            }
+          }
+        }
+      }
+      
+      //주식주문 후 메시지
+      function receiveMessage_AfterOrder(orderNo, quantity, stock, price, fee) {
+        receiveMessage_AdaptiveCard(
+        '<img src="https://image.freepik.com/free-vector/no-translate-detected_23-2147895655.jpg" style="max-height: 100%; min-width: 0px; width: 100%;"/><br>로켓 발사 완료! 주문이 완료되었습니다.<br><br>주문번호: ' + orderNo + '<br>종목: ' + stock + '<br>금액: ' + price + '<br>수량: ' + quantity + '<br>수수료: ' + fee,
+        ['주식체결내역 보러가기'],
+        ['javascript:openScreen("", "N", "5006");'])
+      }
+      
       const store = window.WebChat.createStore(
         {},
         ({ dispatch }) => next => action => {
-          //console.log('액션', action);
+          console.log('액션', action);
           if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
             const event = new Event('webchatincomingactivity');
             event.data = action.payload.activity;
@@ -40,7 +127,6 @@
       const attachmentMiddleware = () => next => card => {
         const { activity: { name, type } } = card;
         
-        
         if (type === 'event' && name === 'passwordInput') {
           return;
         } else {
@@ -48,7 +134,7 @@
             //카드가 들어오는 경우....
             case 'application/vnd.microsoft.card.adaptive':
               //console.log(card.attachment.contentType);
-              return "야야야";
+              return next(card);
 
             default:
               return next(card);
@@ -60,7 +146,7 @@
       //https://github.com/Microsoft/BotFramework-WebChat/blob/master/packages/component/src/Styles/defaultStyleSetOptions.js
       const styleOptions = {
         botAvatarInitials: '로켓봇',
-        botAvatarImage: 'http://chittagongit.com//images/rocket-flat-icon/rocket-flat-icon-26.jpg',
+        botAvatarImage: 'http://chittagongit.com/images/rocket-flat-icon/rocket-flat-icon-26.jpg',
         userAvatarInitials: '나',
         hideUploadButton: true,
       };
@@ -91,49 +177,7 @@
         //  payload: { activityID: "EDYgSIbq8GTCFJ2A3sco6a-4|0000001"" }
         //});
         
-        //메시지 받기
-        //기존 봇의 대답 <LI>를 복제해서 내용만 수정해서 보여주는 원리
-        /*
-        <li class="css-1qyo5rb hide-timestamp" role="listitem">
-          <div class="css-tyxksf css-2p02md">
-            <div aria-hidden="true" class="css-1dgbgmu avatar">
-              로켓봇
-              <div class="css-1tdb3h1 image" style="height: 100%; width: 100%;">
-              <img alt="" src="http://chittagongit.com//images/rocket-flat-icon/rocket-flat-icon-26.jpg">
-            </div>
-          </div>
-          <div class="content">
-            <div class="webchat__row attachment">
-              <div class="css-mhj5i1 attachment bubble">야야야</div>
-            </div>
-              <div aria-hidden="true" class="webchat__row">
-                <span class="css-1s8geyi timestamp transcript-timestamp">
-                  A minute ago
-                </span>
-                <div class="filler"></div>
-              </div>
-            </div>
-            <div class="filler"></div>
-          </div>
-        </li>
-        */
-        var mUL = document.getElementById('webchat').childNodes[0].childNodes[0].childNodes[0].childNodes[1];
-        var mLIs = mUL.childNodes;
-        //봇이 이전에 보낸 메시지 찾기(생긴거 똑같이 복제하기 위함. 클래스명이 대화마다 다르기 때문에 생성은 안됨. 기존 LI를 복제해야함.)
-        for (i = 0; i < mLIs.length; i++) {
-          //console.log(mLIs[i].tagName.toLowerCase()); //li
-          temp = mLIs[i].getElementsByClassName('from-user')
-          if (temp.length == 0) {
-            var targetLI = mLIs[i];
-            //메시지 복제
-            var mNewMessage = targetLI.cloneNode(true);
-            //메시지 내용 변경
-            mNewMessage.getElementsByClassName('content')[0].getElementsByClassName('attachment')[0].getElementsByClassName('bubble')[0].innerHTML = '123';
-            //복제한 메시지 출력
-            mUL.appendChild(mNewMessage);
-            break;
-          }
-        }
+        receiveMessage_AfterOrder(0,0,0,0,0);
       });
 
       window.addEventListener('webchatincomingactivity', ({ data }) => {
@@ -142,40 +186,39 @@
       });
       
       
-        const url = "https://directline.botframework.com/v3/directline/tokens/generate";
-        const other_params = {
-            headers : { "content-type" : "application/json; charset=UTF-8", "Authorization" : "Bearer L3-ab5CJn8Q.-z9_Eii9MvnoPU-naRvEv0_LJH8bhswXuewQoCKHEKE"},
-            body : "",
-            method : "POST",
-            mode : "cors"
-        };
+      //POST 날려서 토큰받아오기(토큰이 있어야 30분간 대화 가능)
+      const url = "https://directline.botframework.com/v3/directline/tokens/generate";
+      const other_params = {
+        headers : {
+          "content-type" : "application/json; charset=UTF-8",
+          "Authorization" : "Bearer L3-ab5CJn8Q.-z9_Eii9MvnoPU-naRvEv0_LJH8bhswXuewQoCKHEKE"
+        },
+        method : "POST"
+      };
 
-        fetch(url, other_params)
-            .then(function(response) {
-            if (response.ok) {
-                //console.log(response.json());
-                response.json().then(function(result) {
-                  window.WebChat.renderWebChat({
-                    directLine: window.WebChat.createDirectLine({ token: result['token'] }),
-                    store,
-                    attachmentMiddleware: attachmentMiddleware,
-                    userID: 'YOUR_USER_ID',
-                    username: 'Web Chat User',
-                    locale: 'ko-KR',
-                    styleOptions
-                  }, document.getElementById('webchat'));
-                  //console.log(result['token']);
-                  
-                  document.querySelector('#webchat > *').focus();
-                });
-            } else {
-                throw new Error("Could not reach the API: " + response.statusText);
-            }
-        }).then(function(data) {
-          console.log(data.encoded);
-        }).catch(function(error) {
-          console.log(error.message);
-        });
+      fetch(url, other_params).then(function(response) {
+        if (response.ok) {
+            response.json().then(function(result) {
+              window.WebChat.renderWebChat({
+                directLine: window.WebChat.createDirectLine({ token: result['token'] }),
+                store,
+                attachmentMiddleware: attachmentMiddleware,
+                userID: 'YOUR_USER_ID',
+                username: 'Web Chat User',
+                locale: 'ko-KR',
+                styleOptions
+              }, document.getElementById('webchat'));
+              
+              document.querySelector('#webchat > *').focus();
+            });
+        } else {
+            throw new Error("Could not reach the API: " + response.statusText);
+        }
+      }).then(function(data) {
+        console.log(data);
+      }).catch(function(error) {
+        console.log(error.message);
+      });
     </script>
   </body>
 </html>
