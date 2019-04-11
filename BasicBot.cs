@@ -143,6 +143,7 @@ namespace Microsoft.BotBuilderSamples
                                     {
                                         string[] cutEntity = entityFound.Split("|SEP|");
                                         await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
+                                        
                                         if (cutEntity.Length > 3)
                                         {
                                             foreach (var cutEntityValue in cutEntity)
@@ -156,11 +157,17 @@ namespace Microsoft.BotBuilderSamples
                                         }
                                         else{
                                             await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
+
+                                            Activity reply = activity.CreateReply();
+                                            reply.Type = ActivityTypes.Event;
+                                            reply.Text = null;
+                                            await dc.Context.SendActivityAsync(reply);
                                         }
                                     }
                                     else
                                     {
                                         await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
+                                        
                                     }
 
                                     
