@@ -143,20 +143,27 @@ namespace Microsoft.BotBuilderSamples
                                     {
                                         string[] cutEntity = entityFound.Split("|SEP|");
                                         await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
-                                        foreach (var cutEntityValue in cutEntity)
+                                        if (cutEntity.Length > 3)
                                         {
-                                            await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
+                                            foreach (var cutEntityValue in cutEntity)
+                                            {
+                                                await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
+                                            }
+                                            await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                            var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
+                                            var response = CreateResponse(activity, buyCard);
+                                            await dc.Context.SendActivityAsync(response);
                                         }
-                                        await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                        else{
+                                            await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
+                                        }
                                     }
                                     else
                                     {
-                                        await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                                        await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
                                     }
 
-                                    var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
-                                    var response = CreateResponse(activity, buyCard);
-                                    await dc.Context.SendActivityAsync(response);
+                                    
 
                                     break;
 
@@ -168,20 +175,28 @@ namespace Microsoft.BotBuilderSamples
                                     {
                                         string[] cutEntity = entityFound.Split("|SEP|");
                                         await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
-                                        foreach (var cutEntityValue in cutEntity)
+                                        if (cutEntity.Length > 3)
                                         {
-                                            await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
+                                            foreach (var cutEntityValue in cutEntity)
+                                            {
+                                                await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
+                                            }
+                                            await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                            var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
+                                            var sell_response = CreateResponse(activity, sellCard);
+                                            await dc.Context.SendActivityAsync(sell_response);
                                         }
-                                        await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                        else
+                                        {
+                                            await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
+                                        }
                                     }
                                     else
                                     {
-                                        await turnContext.SendActivityAsync($"==>No LUIS Entities Found.\n");
+                                        await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
                                     }
 
-                                    var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
-                                    var sell_response = CreateResponse(activity, sellCard);
-                                    await dc.Context.SendActivityAsync(sell_response);
+                                   
                                     break;
                             }
 
@@ -546,8 +561,8 @@ namespace Microsoft.BotBuilderSamples
                 }
                 else
                 {
-                    result += "noquantity";
-                    result += "|SEP|";
+                    //result += "noquantity"; //엔티티 제대로 안들어오면 값 안넘겨줌
+                    //result += "|SEP|";
                 }
 
                 if (stockName != null)
@@ -562,8 +577,8 @@ namespace Microsoft.BotBuilderSamples
                 }
                 else
                 {
-                    result += "nostock";
-                    result += "|SEP|";
+                    //result += "nostock";//엔티티 제대로 안들어오면 값 안넘겨줌
+                    //result += "|SEP|";
                 }
 
                 if (stockPrice != null)
@@ -577,8 +592,8 @@ namespace Microsoft.BotBuilderSamples
                 }
                 else
                 {
-                    result += "noprice";
-                    result += "|SEP|";
+                    //result += "noprice";//엔티티 제대로 안들어오면 값 안넘겨줌
+                    //result += "|SEP|";
                 }
 
                 return result;
