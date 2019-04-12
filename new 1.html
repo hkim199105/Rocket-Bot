@@ -112,11 +112,24 @@
       const store = window.WebChat.createStore(
         {},
         ({ dispatch }) => next => action => {
-          console.log('액션', action);
+          //console.log('액션', action);
           if (action.type === 'DIRECT_LINE/INCOMING_ACTIVITY') {
-            const event = new Event('webchatincomingactivity');
-            event.data = action.payload.activity;
-            window.dispatchEvent(event);
+            if (action.payload.activity.type === 'event') {
+              switch (action.payload.activity.name) {
+                case 'buystock':
+                  alert('주식매수 이벤트 들어옴');
+                  break;
+                  
+                default:
+                  break;
+              }
+            }
+            //받은 메시지 무시하기: type이 event일때는 메시지 출력을 안함
+            //action.payload.activity.type = 'event';
+            
+            //const event = new Event('webchatincomingactivity');
+            //event.data = action.payload.activity;
+            //window.dispatchEvent(event);
           }
 
           return next(action);
