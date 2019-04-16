@@ -84,6 +84,8 @@ namespace Microsoft.BotBuilderSamples
             // Create a dialog context
             var dc = await Dialogs.CreateContextAsync(turnContext);
 
+            await turnContext.SendActivityAsync($"==>Activity Type: {activity.Type}\n");
+
             if (activity.Type == ActivityTypes.Message)
             {
                 // Perform a call to LUIS to retrieve results for the current activity message.
@@ -226,6 +228,7 @@ namespace Microsoft.BotBuilderSamples
             }
             else if (activity.Type == ActivityTypes.ConversationUpdate)
             {
+                await turnContext.SendActivityAsync($"==>Activity MembersAdded: {activity.MembersAdded}\n");
                 if (activity.MembersAdded != null)
                 {
                     // Iterate over all new members added to the conversation.
