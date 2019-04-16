@@ -34,9 +34,9 @@
 
     },
     {
-      "type": "Action.OpenUrl",
+      "type": "Action.Submit",
       "title": "주식매매",
-      "url": "javascript:sendMessage('신한지주 1주 현재가로 살래');"
+      "data": "javascript:sendMessage('신한지주 1주 현재가로 살래');"
     }
   ]
 }
