@@ -302,30 +302,27 @@ namespace Microsoft.BotBuilderSamples
             };
         }
 
-        private Attachment CreateBuyCardAttachment(string JsonDirectory, string entity)
+        private Attachment CreateBuyCardAttachment(string jsonDirectory, string entity)
         {
-            var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));        //51949: euc-kr
+            var adaptiveCard = File.ReadAllText(jsonDirectory, Encoding.GetEncoding(51949));        // 51949: euc-kr
             System.Text.Encoding euckr = System.Text.Encoding.GetEncoding(51949);
 
             var json = JObject.Parse(adaptiveCard);
-            var json2 = new JObject();
-            var json1 = new JObject();
+            var jsonContext = new JObject();
+            var jsonButton1 = new JObject();
+            var jsonButton2 = new JObject();
             var actions = new JArray();
             var body = new JArray();
-
-            json1.Add("type", "TextBlock");
-            json1.Add("size", "default");
-            json1.Add("wrap", true);
-            json1.Add("maxLines", 0);
-
-            json2.Add("type", "Action.OpenUrl");
-            string url = "\"ns://webpop.shinhaninvest.com?data=";
+       
             string text = string.Empty;
-            string title = "매수하기";
+            string titleButton1 = "계좌 변경하기";
+            string titleButton2 = "이대로 매수하기";
+            string urlButton1 = "\"ns://webpop.shinhaninvest.com?data=";
+            string urlButton2 = "\"ns://webpop.shinhaninvest.com?data=";
             string price = string.Empty;
             if (entity.ToString() != string.Empty)
             {
-                string[] arr_Entity = entity.Split("|SEP|");//수량, 종목, 가격
+                string[] arr_Entity = entity.Split("|SEP|");    // 수량, 종목, 가격
                 if (!arr_Entity[1].Equals("nostock"))
                 {
                     text = text + arr_Entity[1]+" ";
@@ -368,21 +365,33 @@ namespace Microsoft.BotBuilderSamples
                 }
 
                 text += " 매수하시겠어요?";
-                url = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
+                urlButton2 = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
             }
-            //한글 문자 인코딩
-            byte[] euckrTextBytes = euckr.GetBytes(text);
-            byte[] euckrTitileBytes = euckr.GetBytes(title);
-            string decodedTitleEUCKR = euckr.GetString(euckrTitileBytes);
-            string decodedTextEUCKR = euckr.GetString(euckrTextBytes);
+            urlButton1 += "&isPop=Y&path=naev850003\"";
+            urlButton2 += "&isPop=Y&path=naev850003\"";
 
-            json1.Add("text", decodedTextEUCKR);
-            json2.Add("title", decodedTitleEUCKR);
-            url += "&isPop=Y&path=naev850003\"";
-            json2.Add("url", url);
+            // 카드본문 세팅
+            jsonContext.Add("type", "TextBlock");
+            jsonContext.Add("size", "default");
+            jsonContext.Add("wrap", true);
+            jsonContext.Add("maxLines", 0);
+            jsonContext.Add("text", euckr.GetString(euckr.GetBytes(text)));
 
-            body.Add(json1);
-            actions.Add(json2);
+            // 버튼1 세팅
+            jsonButton1.Add("type", "Action.OpenUrl");
+            jsonButton1.Add("title", euckr.GetString(euckr.GetBytes(titleButton1)));
+            jsonButton1.Add("url", urlButton1);
+
+            // 버튼2 세팅
+            jsonButton2.Add("type", "Action.OpenUrl");
+            jsonButton2.Add("title", euckr.GetString(euckr.GetBytes(titleButton2)));
+            jsonButton2.Add("url", urlButton2);
+
+            // 카드본문, 버튼들 추가
+            body.Add(jsonContext);
+            actions.Add(jsonButton1);
+            actions.Add(jsonButton2);
+
             json.Add("body", body);
             json.Add("actions", actions);
             adaptiveCard = json.ToString();
@@ -394,30 +403,27 @@ namespace Microsoft.BotBuilderSamples
             };
         }
 
-        private Attachment CreateSellCardAttachment(string JsonDirectory, string entity)
+        private Attachment CreateSellCardAttachment(string jsonDirectory, string entity)
         {
-            var adaptiveCard = File.ReadAllText(JsonDirectory, Encoding.GetEncoding(51949));        //51949: euc-kr
+            var adaptiveCard = File.ReadAllText(jsonDirectory, Encoding.GetEncoding(51949));        // 51949: euc-kr
             System.Text.Encoding euckr = System.Text.Encoding.GetEncoding(51949);
 
             var json = JObject.Parse(adaptiveCard);
-            var json2 = new JObject();
-            var json1 = new JObject();
+            var jsonContext = new JObject();
+            var jsonButton1 = new JObject();
+            var jsonButton2 = new JObject();
             var actions = new JArray();
             var body = new JArray();
 
-            json1.Add("type", "TextBlock");
-            json1.Add("size", "default");
-            json1.Add("wrap", true);
-            json1.Add("maxLines", 0);
-
-            json2.Add("type", "Action.OpenUrl");
-            string url = "\"ns://webpop.shinhaninvest.com?data=";
             string text = string.Empty;
-            string title = "매도하기";
+            string titleButton1 = "계좌 변경하기";
+            string titleButton2 = "이대로 매도하기";
+            string urlButton1 = "\"ns://webpop.shinhaninvest.com?data=";
+            string urlButton2 = "\"ns://webpop.shinhaninvest.com?data=";
             string price = string.Empty;
             if (entity.ToString() != string.Empty)
             {
-                string[] arr_Entity = entity.Split("|SEP|");//수량, 종목, 가격
+                string[] arr_Entity = entity.Split("|SEP|");    // 수량, 종목, 가격
                 if (!arr_Entity[1].Equals("nostock"))
                 {
                     text = text + arr_Entity[1] + " ";
@@ -460,22 +466,31 @@ namespace Microsoft.BotBuilderSamples
                 }
 
                 text += " 매도하시겠어요?";
-                url = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
+                urlButton2 = arr_Entity[0] + "|SEP|" + arr_Entity[1] + "|SEP|" + price + "|SEP|";
             }
 
-            //한글 문자 인코딩
-            byte[] euckrTextBytes = euckr.GetBytes(text);
-            byte[] euckrTitileBytes = euckr.GetBytes(title);
-            string decodedTitleEUCKR = euckr.GetString(euckrTitileBytes);
-            string decodedTextEUCKR = euckr.GetString(euckrTextBytes);
+            // 카드본문 세팅
+            jsonContext.Add("type", "TextBlock");
+            jsonContext.Add("size", "default");
+            jsonContext.Add("wrap", true);
+            jsonContext.Add("maxLines", 0);
+            jsonContext.Add("text", euckr.GetString(euckr.GetBytes(text)));
 
-            json1.Add("text", decodedTextEUCKR);
-            json2.Add("title", decodedTitleEUCKR);
-            url += "&isPop=Y&path=naev850003\"";
-            json2.Add("url", url);
+            // 버튼1 세팅
+            jsonButton1.Add("type", "Action.OpenUrl");
+            jsonButton1.Add("title", euckr.GetString(euckr.GetBytes(titleButton1)));
+            jsonButton1.Add("url", urlButton1);
 
-            body.Add(json1);
-            actions.Add(json2);
+            // 버튼2 세팅
+            jsonButton2.Add("type", "Action.OpenUrl");
+            jsonButton2.Add("title", euckr.GetString(euckr.GetBytes(titleButton2)));
+            jsonButton2.Add("url", urlButton2);
+
+            // 카드본문, 버튼들 추가
+            body.Add(jsonContext);
+            actions.Add(jsonButton1);
+            actions.Add(jsonButton2);
+
             json.Add("body", body);
             json.Add("actions", actions);
             adaptiveCard = json.ToString();
