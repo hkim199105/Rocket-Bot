@@ -228,14 +228,16 @@ namespace Microsoft.BotBuilderSamples
             }
             else if (activity.Type == ActivityTypes.ConversationUpdate)
             {
-                await turnContext.SendActivityAsync($"==>Activity MembersAdded: {activity.MembersAdded}\n");
                 if (activity.MembersAdded != null)
                 {
                     // Iterate over all new members added to the conversation.
                     foreach (var member in activity.MembersAdded)
                     {
+                        await turnContext.SendActivityAsync($"==>Activity MembersAdded: {activity.MembersAdded}\n");
                         // Greet anyone that was not the target (recipient) of this message.
                         // To learn more about Adaptive Cards, see https://aka.ms/msbot-adaptivecards for more details.
+                        await turnContext.SendActivityAsync($"==>member.Id: {member.Id}\n");
+                        await turnContext.SendActivityAsync($"==>activity.Recipient.Id: {activity.Recipient.Id}\n");
                         if (member.Id != activity.Recipient.Id)
                         {
                             var welcomeCard = CreateWelcomeCardAttachment(@".\Dialogs\Welcome\Resources\welcomeCard.json");
