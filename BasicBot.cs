@@ -228,6 +228,7 @@ namespace Microsoft.BotBuilderSamples
             }
             else if (activity.Type == ActivityTypes.ConversationUpdate)
             {
+                await turnContext.SendActivityAsync($"==>Activity MembersAdded: {activity.MembersAdded}\n");
                 if (activity.MembersAdded != null)
                 {
                     // Iterate over all new members added to the conversation.
