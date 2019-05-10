@@ -136,7 +136,7 @@ namespace Microsoft.BotBuilderSamples
                                     break;
 
                                 case BuyIntent:
-                                    await dc.Context.SendActivityAsync(topIntent);
+                                    //await dc.Context.SendActivityAsync(topIntent);
 
                                     // Inform the user if LUIS used an entity.
                                     if (entityFound.ToString() != string.Empty)
@@ -152,15 +152,18 @@ namespace Microsoft.BotBuilderSamples
                                                 await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                             }
                                             await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
-                                            */
+                                            
+                                            // 카드는 html에서 출력
                                             var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                             var response = CreateResponse(activity, buyCard);
                                             await dc.Context.SendActivityAsync(response);
+                                            */
 
-                                            // html에 이벤트만 전달 name으로 구분하면 됨
+                                            // html에 인텐트+엔티티 전달
                                             Activity reply = activity.CreateReply();
                                             reply.Type = ActivityTypes.Event;
                                             reply.Name = "buystock";
+                                            reply.Value = entityFound.ToString();
                                             await dc.Context.SendActivityAsync(reply);
                                         }
                                         else{
