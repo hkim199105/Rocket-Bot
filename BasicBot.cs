@@ -142,15 +142,17 @@ namespace Microsoft.BotBuilderSamples
                                     if (entityFound.ToString() != string.Empty)
                                     {
                                         string[] cutEntity = entityFound.Split("|SEP|");
-                                        await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
+                                        //await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
                                         
                                         if (cutEntity.Length > 3)
                                         {
+                                            /*
                                             foreach (var cutEntityValue in cutEntity)
                                             {
                                                 await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                             }
                                             await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                            */
                                             var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                             var response = CreateResponse(activity, buyCard);
                                             await dc.Context.SendActivityAsync(response);
