@@ -34,9 +34,9 @@
 
     },
     {
-      "type": "Action.OpenUrl",
+      "type": "Action.Submit",
       "title": "주식매매",
-      "url": "ns://webpop.shinhaninvest.com?data=&isPop=Y&path=naev850003"
+      "data": "신한지주 1주 현재가로 살래"
     }
   ]
 }
