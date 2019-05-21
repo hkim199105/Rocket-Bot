@@ -30,7 +30,8 @@ namespace Microsoft.BotBuilderSamples
         public const string BuyIntent = "주식매수";
         public const string SellIntent = "주식매도";
         public const string ModifyIntent = "주식정정";
-        
+        public const string BalanceIntent = "주식잔고";
+
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
         /// In the .bot file, multiple instances of LUIS can be configured.
@@ -210,6 +211,10 @@ namespace Microsoft.BotBuilderSamples
                                     }
 
                                    
+                                    break;
+
+                                case BalanceIntent:
+                                    await dc.Context.SendActivityAsync(topIntent);
                                     break;
                             }
 
