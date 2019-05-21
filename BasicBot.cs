@@ -1,19 +1,18 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.BotBuilderSamples
 {
@@ -143,17 +142,30 @@ namespace Microsoft.BotBuilderSamples
                                     if (entityFound.ToString() != string.Empty)
                                     {
                                         string[] cutEntity = entityFound.Split("|SEP|");
-                                        //await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
-                                        
-                                        if (cutEntity.Length > 3)
+                                        //await turnContext.SendActivityAsync($"==>LUIS String: {entityFound}\n");
+                                        int count = 0;
+                                        bool entityCheck = false;
+                                        foreach (var cutEntityValue in cutEntity)
                                         {
-                                            /*
+                                            if (cutEntityValue != string.Empty)
+                                            {
+                                                count++;
+                                                if (count == 3)
+                                                {
+                                                    entityCheck = true;
+                                                }
+                                            }
+                                        }
+
+                                        if (entityCheck)
+                                        {
+                                            
                                             foreach (var cutEntityValue in cutEntity)
                                             {
                                                 await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                             }
                                             await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
-                                            
+                                            /*
                                             // 카드는 html에서 출력
                                             var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                             var response = CreateResponse(activity, buyCard);
@@ -161,11 +173,11 @@ namespace Microsoft.BotBuilderSamples
                                             */
 
                                             // html에 인텐트+엔티티 전달
-                                            Activity reply = activity.CreateReply();
-                                            reply.Type = ActivityTypes.Event;
-                                            reply.Name = "buystock";
-                                            reply.Value = entityFound.ToString();
-                                            await dc.Context.SendActivityAsync(reply);
+                                            Activity buyReply = activity.CreateReply();
+                                            buyReply.Type = ActivityTypes.Event;
+                                            buyReply.Name = "buystock";
+                                            buyReply.Value = entityFound.ToString();
+                                            await dc.Context.SendActivityAsync(buyReply);
                                         }
                                         else{
                                             await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
@@ -182,32 +194,32 @@ namespace Microsoft.BotBuilderSamples
                                     break;
 
                                 case SellIntent:
-                                    await dc.Context.SendActivityAsync(topIntent);
+                                    //await dc.Context.SendActivityAsync(topIntent);
 
                                     // Inform the user if LUIS used an entity.
                                     if (entityFound.ToString() != string.Empty)
                                     {
                                         string[] cutEntity = entityFound.Split("|SEP|");
-                                        await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
-                                        if (cutEntity.Length > 3)
+                                        //await turnContext.SendActivityAsync($"==>LUIS Count: {cutEntity.Length}\n");
+                                        foreach (var cutEntityValue in cutEntity)
                                         {
-                                            foreach (var cutEntityValue in cutEntity)
-                                            {
-                                                await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
-                                            }
-                                            await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
-                                            var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
-                                            var sell_response = CreateResponse(activity, sellCard);
-                                            await dc.Context.SendActivityAsync(sell_response);
+                                            //await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                         }
-                                        else
-                                        {
-                                            await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
-                                        }
+                                        await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                        var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
+                                        var sell_response = CreateResponse(activity, sellCard);
+                                        await dc.Context.SendActivityAsync(sell_response);
+
+                                        // html에 인텐트+엔티티 전달
+                                        Activity sellReply = activity.CreateReply();
+                                        sellReply.Type = ActivityTypes.Event;
+                                        sellReply.Name = "sellstock";
+                                        sellReply.Value = entityFound.ToString();
+                                        await dc.Context.SendActivityAsync(sellReply);
                                     }
                                     else
                                     {
-                                        await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매수해줘\")");
+                                        await turnContext.SendActivityAsync($"종목, 수량, 단가를 모두 입력해주세요.\n(예시:\"신한지주 1주 현재가로 매도해줘\")");
                                     }
 
                                    
@@ -215,6 +227,14 @@ namespace Microsoft.BotBuilderSamples
 
                                 case BalanceIntent:
                                     await dc.Context.SendActivityAsync(topIntent);
+
+                                    // html에 인텐트+엔티티 전달
+                                    Activity balanceReply = activity.CreateReply();
+                                    balanceReply.Type = ActivityTypes.Event;
+                                    balanceReply.Name = "balancestock";
+                                    balanceReply.Value = entityFound.ToString();
+                                    await dc.Context.SendActivityAsync(balanceReply);
+
                                     break;
                             }
 
@@ -595,7 +615,7 @@ namespace Microsoft.BotBuilderSamples
                 else
                 {
                     //result += "noquantity"; //엔티티 제대로 안들어오면 값 안넘겨줌
-                    //result += "|SEP|";
+                    result += "|SEP|";
                 }
 
                 if (stockName != null)
@@ -611,7 +631,7 @@ namespace Microsoft.BotBuilderSamples
                 else
                 {
                     //result += "nostock";//엔티티 제대로 안들어오면 값 안넘겨줌
-                    //result += "|SEP|";
+                    result += "|SEP|";
                 }
 
                 if (stockPrice != null)
@@ -626,12 +646,16 @@ namespace Microsoft.BotBuilderSamples
                 else
                 {
                     //result += "noprice";//엔티티 제대로 안들어오면 값 안넘겨줌
-                    //result += "|SEP|";
+                    result += "|SEP|";
                 }
 
+                //문자열 끝 구분자(|SEP|) 5자리 제거
+                result = result.Substring(0, result.Length - 5);
                 return result;
             }
             // No entities were found, empty string returned.
+            //문자열 끝 구분자(|SEP|) 5자리 제거
+            result = result.Substring(0, result.Length - 5);
             return result;
         }
     }
