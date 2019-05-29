@@ -23,6 +23,7 @@
               "items": [
                 {
                   "type": "TextBlock",
+                  "size": "Small",
                   "text": "대한유화\n"
                 }
               ],
@@ -33,6 +34,7 @@
               "items": [
                 {
                   "type": "TextBlock",
+                  "size": "Small",
                   "text": "1"
                 }
               ],
@@ -43,6 +45,7 @@
               "items": [
                 {
                   "type": "TextBlock",
+                  "size": "Small",
                   "text": "271,617"
                 }
               ],
@@ -53,6 +56,7 @@
               "items": [
                 {
                   "type": "TextBlock",
+                  "size": "Small",
                   "text": "239,000"
                 }
               ],
@@ -64,6 +68,7 @@
                 {
                   "type": "TextBlock",
                   "color": "Attention",
+                  "size": "Small",
                   "text": "-10.32%"
                 }
               ],
