@@ -30,6 +30,7 @@ namespace Microsoft.BotBuilderSamples
         public const string SellIntent = "주식매도";
         public const string ModifyIntent = "주식정정";
         public const string BalanceIntent = "주식잔고";
+        public const string SkinBalanceIntent = "껍데기_잔고";
 
         /// <summary>
         /// Key in the bot config (.bot file) for the LUIS instance.
@@ -234,6 +235,16 @@ namespace Microsoft.BotBuilderSamples
                                     balanceReply.Name = "balancestock";
                                     balanceReply.Value = entityFound.ToString();
                                     await dc.Context.SendActivityAsync(balanceReply);
+
+                                    break;
+
+                                case SkinBalanceIntent:
+                                    // html에 인텐트+엔티티 전달
+                                    Activity balanceSkinReply = activity.CreateReply();
+                                    balanceSkinReply.Type = ActivityTypes.Event;
+                                    balanceSkinReply.Name = "balanceskin";
+                                    balanceSkinReply.Value = entityFound.ToString();
+                                    await dc.Context.SendActivityAsync(balanceSkinReply);
 
                                     // 잔고인텐트 일때는 잔고 카드 전달
                                     var balanceCard = CreateWelcomeCardAttachment(@".\Dialogs\BalanceIntent\Resources\balanceCard.json");
