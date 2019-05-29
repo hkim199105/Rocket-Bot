@@ -235,6 +235,10 @@ namespace Microsoft.BotBuilderSamples
                                     balanceReply.Value = entityFound.ToString();
                                     await dc.Context.SendActivityAsync(balanceReply);
 
+                                    // 잔고인텐트 일때는 잔고 카드 전달
+                                    var balanceCard = CreateWelcomeCardAttachment(@".\Dialogs\BalanceIntent\Resources\balanceCard.json");
+                                    var response = CreateResponse(activity, balanceCard);
+                                    await dc.Context.SendActivityAsync(response);
                                     break;
                             }
 
