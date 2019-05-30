@@ -1,6 +1,6 @@
 {
   "runtimeTarget": {
-    "name": ".NETCoreApp,Version=v2.0",
+    "name": ".NETCoreApp,Version=v2.2",
     "signature": "c9463a46ce6bab2d0b609777f559b60d834247aa"
   },
   "compilationOptions": {
@@ -21,7 +21,7 @@
     "debugType": "portable"
   },
   "targets": {
-    ".NETCoreApp,Version=v2.0": {
+    ".NETCoreApp,Version=v2.2": {
       "BasicBot/1.0.0": {
         "dependencies": {
           "Microsoft.ApplicationInsights.AspNetCore": "2.1.1",
@@ -347,13 +347,13 @@
           "Microsoft.Extensions.Logging.Configuration": "2.0.2"
         },
         "runtime": {
-          "lib/netcoreapp2.0/Microsoft.AspNetCore.ApplicationInsights.HostingStartup.dll": {
+          "lib/netcoreapp2.2/Microsoft.AspNetCore.ApplicationInsights.HostingStartup.dll": {
             "assemblyVersion": "2.0.3.0",
             "fileVersion": "2.0.3.18114"
           }
         },
         "compile": {
-          "lib/netcoreapp2.0/Microsoft.AspNetCore.ApplicationInsights.HostingStartup.dll": {}
+          "lib/netcoreapp2.2/Microsoft.AspNetCore.ApplicationInsights.HostingStartup.dll": {}
         }
       },
       "Microsoft.AspNetCore.Authentication/2.0.4": {
