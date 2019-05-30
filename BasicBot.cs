@@ -208,9 +208,12 @@ namespace Microsoft.BotBuilderSamples
                                             //await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                         }
                                         //await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                        /*
+                                        // 카드는 html에서 출력
                                         var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                         var sell_response = CreateResponse(activity, sellCard);
                                         await dc.Context.SendActivityAsync(sell_response);
+                                        */
 
                                         // html에 인텐트+엔티티 전달
                                         Activity sellReply = activity.CreateReply();
@@ -228,7 +231,7 @@ namespace Microsoft.BotBuilderSamples
                                     break;
 
                                 case BalanceIntent:
-                                    await dc.Context.SendActivityAsync(topIntent);
+                                    //await dc.Context.SendActivityAsync(topIntent);
 
                                     // html에 인텐트+엔티티 전달
                                     Activity balanceReply = activity.CreateReply();
