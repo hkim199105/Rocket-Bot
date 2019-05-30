@@ -160,12 +160,13 @@ namespace Microsoft.BotBuilderSamples
 
                                         if (entityCheck)
                                         {
-                                            
+                                            /*
                                             foreach (var cutEntityValue in cutEntity)
                                             {
                                                 await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                             }
                                             await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                            */
                                             /*
                                             // 카드는 html에서 출력
                                             var buyCard = CreateBuyCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
@@ -206,7 +207,7 @@ namespace Microsoft.BotBuilderSamples
                                         {
                                             //await turnContext.SendActivityAsync($"==>LUIS Entity: {cutEntityValue}\n");
                                         }
-                                        await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
+                                        //await turnContext.SendActivityAsync($"==>LUIS Entity Found: {entityFound}\n");
                                         var sellCard = CreateSellCardAttachment(@".\Dialogs\BuyIntent\Resources\buyCard.json", entityFound);
                                         var sell_response = CreateResponse(activity, sellCard);
                                         await dc.Context.SendActivityAsync(sell_response);
