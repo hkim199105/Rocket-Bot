@@ -126,7 +126,7 @@ namespace Microsoft.BotBuilderSamples
                             switch (topIntent)
                             {
                                 case GreetingIntent:
-                                    await dc.BeginDialogAsync(nameof(GreetingDialog));
+                                    //await dc.BeginDialogAsync(nameof(GreetingDialog));
                                     break;
 
                                 case NoneIntent:
@@ -676,6 +676,7 @@ namespace Microsoft.BotBuilderSamples
             //문자열 끝 구분자(|SEP|) 5자리 제거
             result = result.Substring(0, result.Length - 5);
             return result;
+
         }
     }
 }
